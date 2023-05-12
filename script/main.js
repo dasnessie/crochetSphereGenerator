@@ -60,28 +60,44 @@ document.querySelector('#formElem').addEventListener("submit", (e) => {
     const circumference = data.get("circumference");
     const stitch = stitches[data.get("stitch")];
 
-    let pTitle = `Crochet pattern for a sphere with a circumference of ${circumference} stitches in ${stitch.name}`;
-    document.getElementById("patternTitle").innerHTML = pTitle;
+    try {
+        let pattern = generatePattern(circumference, stitch);
 
-    document.getElementById("patternBody").innerHTML = generatePattern(circumference, stitch);
+        if (pattern["body"].length < 4) {
+            showWarning("Warning", "Your pattern looks awfully short. I'll display it anyways, but make sure to check that the values you entered make sense.");
+        } else {
+            hideWarning();
+        }
+    
+        document.getElementById("patternTitle").innerHTML = pattern["title"];
+        document.getElementById("patternBody").innerHTML = makeHtmlList(pattern["body"]);
+    } catch (e) {
+        document.getElementById("patternTitle").innerHTML = "";
+        document.getElementById("patternBody").innerHTML = "";
+        showWarning("Error", e.message);
+    }
 });
 
-// Generate the crochet pattern body. 
-// Returns a string that contains list elements.
-// If errors occur, displays an error message. In that case, the pattern string may be empty.
+// Generate the pattern.
+// Returns the pattern object that contains the title and the body.
 function generatePattern(circumference, stitch) {
+    return {
+        title: `Crochet pattern for a sphere with a circumference of ${circumference} stitches in ${stitch.name}`,
+        body: generatePatternBody(circumference, stitch),
+    }
+}
+
+// Generate the crochet pattern body. 
+// Returns array that contains the pattern body lines.
+// If errors occur, displays an error message. In that case, the pattern string may be empty.
+function generatePatternBody(circumference, stitch) {
     let patternArray = [];
     let rowCircumferences = calculateRowCircumferences(circumference, stitch);
 
     let stuffingRow = findStuffingRow(rowCircumferences); 
     let isStuffingRow = false;
 
-    try {
-        patternArray.push(generateFirstRow(rowCircumferences[0], stitch));
-    } catch (e) {
-        showWarning("Error", e.message);
-        return "";
-    }
+    patternArray.push(generateFirstRow(rowCircumferences[0], stitch));
 
     for (let i = 1; i < rowCircumferences.length; i++) {
         isStuffingRow = (stuffingRow == i);
@@ -90,21 +106,13 @@ function generatePattern(circumference, stitch) {
 
     patternArray.push(generateLastRow(rowCircumferences.length+1 == stuffingRow));
 
-    let pattern = "";
+    // let pattern = "";
 
     if (rowCircumferences.length < 2){
-        showWarning("Error", `The circumference you entered is to small to generate a pattern in ${stitch.name}.`);
-        return "";
+        throw Error(`The circumference you entered is to small to generate a pattern in ${stitch.name}.`);
     } 
-    if (rowCircumferences.length < 4) {
-        showWarning("Warning", "Your pattern looks awfully short. I'll display it anyways, but make sure to check that the values you entered make sense.");
-    } else {
-        hideWarning();
-    }
 
-    pattern += makeHtmlList(patternArray)
-
-    return pattern;
+    return patternArray;
 }
 
 // Calculate the circumferences of all the rows of the sphere for a given sphere circumference and stitch ratio.
@@ -134,8 +142,8 @@ function calculateRowCircumferences(circumference, stitch) {
 function generateFirstRow(rowCircumference, stitch) {
     if (rowCircumference < 3 || rowCircumference == undefined) {
         let message = "The data you entered results in a first row with less than three stitches. Please check the data you entered.";
-        if (stitch.short == "st" && stitch.ratio > 2.5) {
-            message = "The custom stitch you entered is too wide to generate a sphere pattern.";
+        if (stitch.short == "st") {
+            message += " The wider your custom stitch is, the shorter your first row is going to be.";
         }
         throw new Error(message);
     }
