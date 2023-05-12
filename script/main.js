@@ -63,14 +63,14 @@ document.querySelector('#formElem').addEventListener("submit", (e) => {
     try {
         let pattern = generatePattern(circumference, stitch);
 
-        if (pattern["body"].length < 4) {
+        if (pattern.body.length < 4) {
             showWarning("Warning", "Your pattern looks awfully short. I'll display it anyways, but make sure to check that the values you entered make sense.");
         } else {
             hideWarning();
         }
     
-        document.getElementById("patternTitle").innerHTML = pattern["title"];
-        document.getElementById("patternBody").innerHTML = makeHtmlList(pattern["body"]);
+        document.getElementById("patternTitle").innerHTML = pattern.title;
+        document.getElementById("patternBody").innerHTML = makeHtmlList(pattern.body);
     } catch (e) {
         document.getElementById("patternTitle").innerHTML = "";
         document.getElementById("patternBody").innerHTML = "";
@@ -89,7 +89,6 @@ function generatePattern(circumference, stitch) {
 
 // Generate the crochet pattern body. 
 // Returns array that contains the pattern body lines.
-// If errors occur, displays an error message. In that case, the pattern string may be empty.
 function generatePatternBody(circumference, stitch) {
     let patternArray = [];
     let rowCircumferences = calculateRowCircumferences(circumference, stitch);
