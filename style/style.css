@@ -2,6 +2,10 @@ input[type=number] {
     width: 5em;
 }
 
+select{
+    width: 11em;
+}
+
 label {
     display: inline-block;
 }
