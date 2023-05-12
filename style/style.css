@@ -1,0 +1,24 @@
+input[type=number] {
+    width: 5em;
+}
+
+label {
+    display: inline-block;
+}
+
+.warning {
+    position: relative;
+    border: 1px solid transparent;
+    margin: 1rem 0 2rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    background-color: rgba(211,0,56,.1);
+}
+
+#patternWarning {
+    display: none;
+}
+
+#customStitch {
+    display: none;
+}
