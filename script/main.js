@@ -61,9 +61,10 @@ document.querySelector('#formElem').addEventListener("submit", (e) => {
     
     const circumference = data.get("circumference");
     const stitch = stitches[data.get("stitch")];
+    const joinedRounds = data.get("roundStyle") === "joined";
 
     try {
-        let pattern = generatePattern(circumference, stitch);
+        let pattern = generatePattern(circumference, stitch, joinedRounds);
 
         if (pattern.body.length < 5) {
             showWarning("Warning", "Your pattern looks awfully short. I'll display it anyways, but make sure to check that the values you entered make sense.");

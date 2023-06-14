@@ -2,27 +2,27 @@ import { capitalizeFirstLetter } from "./helpers.js"
 
 // Generate the pattern.
 // Returns the pattern object that contains the title and the body.
-function generatePattern(circumference, stitch) {
+function generatePattern(circumference, stitch, joinedRounds) {
     return {
         title: `Crochet pattern for a sphere with a circumference of ${circumference} stitches in ${stitch.name}`,
-        body: generatePatternBody(circumference, stitch),
+        body: generatePatternBody(circumference, stitch, joinedRounds),
     }
 }
 
 // Generate the crochet pattern body. 
 // Returns array that contains the pattern body lines.
-function generatePatternBody(circumference, stitch) {
+function generatePatternBody(circumference, stitch, joinedRounds) {
     let patternArray = [];
     let rowCircumferences = calculateRowCircumferences(circumference, stitch);
 
     let stuffingRow = findStuffingRow(rowCircumferences); 
     let isStuffingRow = false;
 
-    patternArray.push(generateFirstRow(rowCircumferences[0], stitch));
+    patternArray.push(generateFirstRow(rowCircumferences[0], stitch, joinedRounds));
 
     for (let i = 1; i < rowCircumferences.length; i++) {
         isStuffingRow = (stuffingRow == i);
-        patternArray.push(generateMiddleRow(rowCircumferences[i], rowCircumferences[i-1], stitch, isStuffingRow, (i == rowCircumferences.length-1)));
+        patternArray.push(generateMiddleRow(rowCircumferences[i], rowCircumferences[i-1], stitch, isStuffingRow, (i == rowCircumferences.length-1), joinedRounds));
     }
 
     patternArray.push(generateLastRow(rowCircumferences.length == stuffingRow));
@@ -65,8 +65,13 @@ function calculateRowCircumferences(circumference, stitch) {
 
 // Generates the pattern for the first row.
 // Returns a string.
-function generateFirstRow(rowCircumference, stitch) {
-    return `Magic ring, ${rowCircumference} ${stitch.short}, join. Ch ${stitch.chainCount}. (${rowCircumference})`;
+function generateFirstRow(rowCircumference, stitch, joinedRounds) {
+    let pattern = `Magic ring, ${rowCircumference} ${stitch.short}`;
+    if (joinedRounds) {
+        pattern += `, join. Ch ${stitch.chainCount}`;
+    }
+    pattern += `. (${rowCircumference})`;
+    return pattern;
 }
 
 // Generates the pattern for the last row.
@@ -80,20 +85,23 @@ function generateLastRow(stuffingRow) {
 
 // Generates the pattern for any row that is not the first or last.
 // Returns a string.
-function generateMiddleRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow) {
+function generateMiddleRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds) {
     if (rowCircumference > prevRowCircumference) {
-        return generateIncRow(rowCircumference, prevRowCircumference, stitch);
+        return generateIncRow(rowCircumference, prevRowCircumference, stitch, joinedRounds);
     } 
     if (rowCircumference < prevRowCircumference) {
-        return generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow);
+        return generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds);
     }
-    return generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow);
+    return generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds);
 }
 
-function generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow) {
+function generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds) {
     let pattern = `${capitalizeFirstLetter(stitch.short)} in every stitch`;
-    if (!isLastRow) {
-        pattern += `, join. Ch ${stitch.chainCount}`;
+    if (joinedRounds) {
+        pattern += ", join"
+        if (!isLastRow) {
+            pattern += `. Ch ${stitch.chainCount}`;
+        }
     }
     pattern += `. (${rowCircumference})`;
     if (isStuffingRow) {
@@ -104,7 +112,7 @@ function generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow)
 
 // Generates the pattern for an increase row.
 // Returns a string.
-function generateIncRow(rowCircumference, prevRowCircumference, stitch) {
+function generateIncRow(rowCircumference, prevRowCircumference, stitch, joinedRounds) {
     let pattern = "";
     if (rowCircumference > 2*prevRowCircumference) {
         throw Error("Can not generate increase row: row more than twice as long as previous")
@@ -145,13 +153,16 @@ function generateIncRow(rowCircumference, prevRowCircumference, stitch) {
             }
         }
     }
-    pattern += `, join. Ch ${stitch.chainCount}. (${rowCircumference})`;
+    if (joinedRounds) {
+        pattern += `, join. Ch ${stitch.chainCount}`;
+    }
+    pattern += `. (${rowCircumference})`;
     return pattern;
 }
 
 // Generates the pattern for a decrease row.
 // Returns a string.
-function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow) {
+function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds) {
     let pattern = "";
     if (prevRowCircumference == 2*rowCircumference) {
         pattern += "Dec in every stitch";
@@ -189,11 +200,13 @@ function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffi
             }
         }
     }
-    pattern += `, join.`;
-    if (!(isLastRow)) {
-        pattern += ` Ch ${stitch.chainCount}.`;
+    if (joinedRounds) {
+        pattern += `, join`;
+        if (!(isLastRow)) {
+            pattern += `. Ch ${stitch.chainCount}`;
+        }
     }
-    pattern += ` (${rowCircumference})`;
+    pattern += `. (${rowCircumference})`;
     if (isStuffingRow) {
         pattern += " Lightly stuff the sphere if desired.";
     }

@@ -64,7 +64,7 @@ function testPatternGenerator () {
     // pattern generator should throw exception 
     // if circumference is less than 5 stitches in single crochet
     try {
-        generatePattern(4, sc);
+        generatePattern(4, sc, true);
         displayTestResult("Generate Pattern", false, "pattern was generated with just 4 stitches, error was expected but not thrown");
         testSuccessful = false;
     } catch (e) {
@@ -73,8 +73,8 @@ function testPatternGenerator () {
         }
     }
 
-    // generate pattern in sc with circumference 5 st
-    let pattern = generatePattern(5, sc);
+    // generate pattern in sc with circumference 5 st (joined rounds)
+    let pattern = generatePattern(5, sc, true);
     let patternTestResult = true;
     patternTestResult *= pattern.title === "Crochet pattern for a sphere with a circumference of 5 stitches in single crochet"
     patternTestResult *= pattern.body.length === 4;
@@ -82,14 +82,25 @@ function testPatternGenerator () {
     patternTestResult *= pattern.body[1] === "Sc 3, inc 1, join. Ch 1. (5)";
     patternTestResult *= pattern.body[2] === "Sc 3, dec 1, join. (4)";
     patternTestResult *= pattern.body[3] === "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
-    testSuccessful *= displayFailedTest("Generate Pattern", patternTestResult, "pattern in sc with circumference 5");
+    testSuccessful *= displayFailedTest("Generate Pattern", patternTestResult, "pattern in sc with circumference 5, joined rounds");
+
+    // generate pattern in sc with circumference 5 st (continuous rounds)
+    pattern = generatePattern(5, sc, false);
+    patternTestResult = true;
+    patternTestResult *= pattern.title === "Crochet pattern for a sphere with a circumference of 5 stitches in single crochet"
+    patternTestResult *= pattern.body.length === 4;
+    patternTestResult *= pattern.body[0] === "Magic ring, 4 sc. (4)";
+    patternTestResult *= pattern.body[1] === "Sc 3, inc 1. (5)";
+    patternTestResult *= pattern.body[2] === "Sc 3, dec 1. (4)";
+    patternTestResult *= pattern.body[3] === "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
+    testSuccessful *= displayFailedTest("Generate Pattern", patternTestResult, "pattern in sc with circumference 5, continuous rounds");
 
     // --- Test Pattern Generator Body ---
 
     // pattern generator should throw exception if circumference 
     // is less than 5 stitches in single crochet
     try {
-        generatePatternBody(4, sc);
+        generatePatternBody(4, sc, true);
         displayTestResult("Generate Pattern Body", false, "pattern was generated with just 4 stitches, error was expected but not thrown");
         testSuccessful = false;
     } catch (e) {
@@ -98,15 +109,25 @@ function testPatternGenerator () {
         }
     }
 
-    // generate pattern in sc with circumference 5 st
-    let patternBody = generatePatternBody(5, sc);
+    // generate pattern in sc with circumference 5 st (joined rounds)
+    let patternBody = generatePatternBody(5, sc, true);
     let patternBodyTestResult = true;
     patternBodyTestResult *= patternBody.length === 4;
     patternBodyTestResult *= patternBody[0] === "Magic ring, 4 sc, join. Ch 1. (4)";
     patternBodyTestResult *= patternBody[1] === "Sc 3, inc 1, join. Ch 1. (5)";
     patternBodyTestResult *= patternBody[2] === "Sc 3, dec 1, join. (4)";
     patternBodyTestResult *= patternBody[3] === "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
-    testSuccessful *= displayFailedTest("Generate Pattern Body", patternBodyTestResult, "pattern in sc with circumference 5");
+    testSuccessful *= displayFailedTest("Generate Pattern Body", patternBodyTestResult, "pattern in sc with circumference 5, joined rounds");
+    
+    // generate pattern in sc with circumference 5 st (continuous rounds)
+    patternBody = generatePatternBody(5, sc, false);
+    patternBodyTestResult = true;
+    patternBodyTestResult *= patternBody.length === 4;
+    patternBodyTestResult *= patternBody[0] === "Magic ring, 4 sc. (4)";
+    patternBodyTestResult *= patternBody[1] === "Sc 3, inc 1. (5)";
+    patternBodyTestResult *= patternBody[2] === "Sc 3, dec 1. (4)";
+    patternBodyTestResult *= patternBody[3] === "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
+    testSuccessful *= displayFailedTest("Generate Pattern Body", patternBodyTestResult, "pattern in sc with circumference 5, continuous rounds");
 
     // --- Calculate Row Circumferences ---
 
@@ -160,33 +181,48 @@ function testPatternGenerator () {
     testSuccessful *= displayFailedTest("Calculate row circumferences", circumferenceTest, `Result for row circumference (20 st): ${circumferences20}`);
 
     // --- Generate First Row ---
-    testSuccessful *= displayFailedTest("Generate first row", generateFirstRow(42, sc) === "Magic ring, 42 sc, join. Ch 1. (42)");
+    testSuccessful *= displayFailedTest("Generate first row", generateFirstRow(42, sc, true) === "Magic ring, 42 sc, join. Ch 1. (42)", "joined rounds");
+    testSuccessful *= displayFailedTest("Generate first row", generateFirstRow(42, sc, false) === "Magic ring, 42 sc. (42)", "continuous rounds");
     
     // --- Generate Last Row ---
     testSuccessful *= displayFailedTest("Generate last row", generateLastRow(false) === "Finish stuffing the sphere. Weave a thread through all the stitches and pull tight to finish.", "last row isn't stuffing row");
     testSuccessful *= displayFailedTest("Generate last row", generateLastRow(true) === "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.", "last row is stuffing row");
 
     // --- Generate Middle Row ---
-    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(16, 13, sc, false, false) ===  "*Sc 3, inc 1* ×3, sc 1, join. Ch 1. (16)", "increase row");
-    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(13, 16, sc, false, false) === "*Sc 3, dec 1* ×3, sc 1, join. Ch 1. (13)", "decrease row");
-    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(10, 10, sc, false, false) === "Sc in every stitch, join. Ch 1. (10)", "no increases or decreases");
+    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(16, 13, sc, false, false, true) ===  "*Sc 3, inc 1* ×3, sc 1, join. Ch 1. (16)", "increase row, joined rows");
+    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(13, 16, sc, false, false, true) === "*Sc 3, dec 1* ×3, sc 1, join. Ch 1. (13)", "decrease row, joined rows");
+    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(10, 10, sc, false, false, true) === "Sc in every stitch, join. Ch 1. (10)", "no increases or decreases, joined rows");
+    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(16, 13, sc, false, false, false) ===  "*Sc 3, inc 1* ×3, sc 1. (16)", "increase row, continuous rows");
+    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(13, 16, sc, false, false, false) === "*Sc 3, dec 1* ×3, sc 1. (13)", "decrease row, continuous rows");
+    testSuccessful *= displayFailedTest("Generate middle row", generateMiddleRow(10, 10, sc, false, false, false) === "Sc in every stitch. (10)", "no increases or decreases, continuous rows");
 
     // --- Generate Increase Row ---
-    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(10, 5, sc) === "Inc in every stitch, join. Ch 1. (10)", "all increases");
-    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(16, 10, sc) === "*Sc 1, inc 1* ×4, inc 2, join. Ch 1. (16)", "more inc than normal st");
-    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(16, 13, sc) === "*Sc 3, inc 1* ×3, sc 1, join. Ch 1. (16)", "fewer inc than normal st");
+    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(10, 5, sc, true) === "Inc in every stitch, join. Ch 1. (10)", "all increases, joined rounds");
+    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(16, 10, sc, true) === "*Sc 1, inc 1* ×4, inc 2, join. Ch 1. (16)", "more inc than normal st, joined rounds");
+    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(16, 13, sc, true) === "*Sc 3, inc 1* ×3, sc 1, join. Ch 1. (16)", "fewer inc than normal st, joined rounds");
+    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(10, 5, sc, false) === "Inc in every stitch. (10)", "all increases, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(16, 10, sc, false) === "*Sc 1, inc 1* ×4, inc 2. (16)", "more inc than normal st, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate increase row", generateIncRow(16, 13, sc, false) === "*Sc 3, inc 1* ×3, sc 1. (16)", "fewer inc than normal st, continuous rounds");
 
     // --- Generate Decrease Row ---
-    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(5, 10, sc, false, false) === "Dec in every stitch, join. Ch 1. (5)", "all decreases");
-    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(10, 16, sc, false, false) === "*Sc 1, dec 1* ×4, dec 2, join. Ch 1. (10)", "more dec than normal st");
-    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, false, false) === "*Sc 3, dec 1* ×3, sc 1, join. Ch 1. (13)", "fewer dec than normal st");
-    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, false, true) === "*Sc 3, dec 1* ×3, sc 1, join. (13)", "is last row");
-    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, true, false) === "*Sc 3, dec 1* ×3, sc 1, join. Ch 1. (13) Lightly stuff the sphere if desired.", "is stuffing row");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(5, 10, sc, false, false, true) === "Dec in every stitch, join. Ch 1. (5)", "all decreases, joined rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(10, 16, sc, false, false, true) === "*Sc 1, dec 1* ×4, dec 2, join. Ch 1. (10)", "more dec than normal st, joined rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, false, false, true) === "*Sc 3, dec 1* ×3, sc 1, join. Ch 1. (13)", "fewer dec than normal st, joined rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, false, true, true) === "*Sc 3, dec 1* ×3, sc 1, join. (13)", "is last row, joined rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, true, false, true) === "*Sc 3, dec 1* ×3, sc 1, join. Ch 1. (13) Lightly stuff the sphere if desired.", "is stuffing row, joined rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(5, 10, sc, false, false, false) === "Dec in every stitch. (5)", "all decreases, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(10, 16, sc, false, false, false) === "*Sc 1, dec 1* ×4, dec 2. (10)", "more dec than normal st, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, false, false, false) === "*Sc 3, dec 1* ×3, sc 1. (13)", "fewer dec than normal st, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, false, true, false) === "*Sc 3, dec 1* ×3, sc 1. (13)", "is last row, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate decrease row", generateDecRow(13, 16, sc, true, false, false) === "*Sc 3, dec 1* ×3, sc 1. (13) Lightly stuff the sphere if desired.", "is stuffing row, continuous rounds");
     
     // --- Generate Straight Row ---
-    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, false, false) === "Sc in every stitch, join. Ch 1. (10)", "not stuffing row, not last row");
-    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, true, false) === "Sc in every stitch, join. Ch 1. (10) Lightly stuff the sphere if desired.", "stuffing row");
-    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, false, true) === "Sc in every stitch. (10)", "last row");
+    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, false, false, true) === "Sc in every stitch, join. Ch 1. (10)", "not stuffing row, not last row, joined rounds");
+    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, true, false, true) === "Sc in every stitch, join. Ch 1. (10) Lightly stuff the sphere if desired.", "stuffing row, joined rounds");
+    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, false, true, true) === "Sc in every stitch, join. (10)", "last row, joined rounds");
+    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, false, false, false) === "Sc in every stitch. (10)", "not stuffing row, not last row, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, true, false, false) === "Sc in every stitch. (10) Lightly stuff the sphere if desired.", "stuffing row, continuous rounds");
+    testSuccessful *= displayFailedTest("Generate straight row", generateStraightRow(10, sc, false, true, false) === "Sc in every stitch. (10)", "last row, continuous rounds");
 
     // --- findStuffingRow ---
     let circumferencesShort = [1, 2, 3, 4, 5, 4, 3, 2, 1];
