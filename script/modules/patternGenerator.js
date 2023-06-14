@@ -25,9 +25,7 @@ function generatePatternBody(circumference, stitch) {
         patternArray.push(generateMiddleRow(rowCircumferences[i], rowCircumferences[i-1], stitch, isStuffingRow, (i == rowCircumferences.length-1)));
     }
 
-    patternArray.push(generateLastRow(rowCircumferences.length+1 == stuffingRow));
-
-    // let pattern = "";
+    patternArray.push(generateLastRow(rowCircumferences.length == stuffingRow));
 
     if (rowCircumferences.length < 2){
         throw Error(`The circumference you entered is too small to generate a pattern in ${stitch.name}.`);
@@ -74,7 +72,7 @@ function generateFirstRow(rowCircumference, stitch) {
 // Generates the pattern for the last row.
 // Returns a string.
 function generateLastRow(stuffingRow) {
-    if (stuffingRow < 2) {
+    if (stuffingRow) {
         return "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
     } 
     return "Finish stuffing the sphere. Weave a thread through all the stitches and pull tight to finish.";
@@ -89,13 +87,28 @@ function generateMiddleRow(rowCircumference, prevRowCircumference, stitch, isStu
     if (rowCircumference < prevRowCircumference) {
         return generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow);
     }
-    return `${capitalizeFirstLetter(stitch.short)} in every stitch. (${rowCircumference})`;
+    return generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow);
+}
+
+function generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow) {
+    let pattern = `${capitalizeFirstLetter(stitch.short)} in every stitch`;
+    if (!isLastRow) {
+        pattern += `, join. Ch ${stitch.chainCount}`;
+    }
+    pattern += `. (${rowCircumference})`;
+    if (isStuffingRow) {
+        pattern += " Lightly stuff the sphere if desired.";
+    }
+    return pattern;
 }
 
 // Generates the pattern for an increase row.
 // Returns a string.
 function generateIncRow(rowCircumference, prevRowCircumference, stitch) {
     let pattern = "";
+    if (rowCircumference > 2*prevRowCircumference) {
+        throw Error("Can not generate increase row: row more than twice as long as previous")
+    }
     if (rowCircumference == 2*prevRowCircumference) {
         pattern += "Inc in every stitch";
     } else {
@@ -169,7 +182,7 @@ function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffi
             }
             pattern += `${capitalizeFirstLetter(stitch.short)} ${repeatWidth-1}, dec 1`;
             if (repeats > 1) {
-                pattern += `* × ${repeats}`;
+                pattern += `* ×${repeats}`;
             }
             if (tail > 0) {
                 pattern += `, ${stitch.short} ${tail}`;
@@ -196,9 +209,9 @@ function findStuffingRow(rowCircumferences) {
         // The second to last row can not be the stuffing row, because it would end with stuffing the sphere,
         // and the last row would begin with stuffing the sphere.
         // If that would be the case, make the last row the stuffing row.
-        stuffingRow = rowCircumferences.length + 1;
+        stuffingRow = rowCircumferences.length;
     } 
     return stuffingRow;
 }
 
-export { generatePattern };
+export { generatePattern, generatePatternBody, calculateRowCircumferences, generateFirstRow, generateLastRow, findStuffingRow, generateIncRow, generateDecRow, generateMiddleRow, generateStraightRow };

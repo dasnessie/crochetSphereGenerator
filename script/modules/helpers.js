@@ -5,9 +5,12 @@ function capitalizeFirstLetter(string) {
 
 // Turns an array into a string of html list elements.
 function makeHtmlList(array) {
+    if (array.length == 0) {
+        return "";
+    }
     let list = "<li>";
-    list += array.join("</li>\n<li>");
-    list += "</li>\n";
+    list += array.join("</li><li>");
+    list += "</li>";
     return list;
 }
 
