@@ -4,7 +4,7 @@ import { capitalizeFirstLetter } from "./helpers.js"
 // Returns the pattern object that contains the title and the body.
 function generatePattern(circumference, stitch, joinedRounds) {
     return {
-        title: `Crochet pattern for a sphere with a circumference of ${circumference} stitches in ${stitch.name}`,
+        title: `Crochet pattern for a sphere with a circumference of ${circumference} stitches in ${stitch.titleName}`,
         body: generatePatternBody(circumference, stitch, joinedRounds),
     }
 }
@@ -64,27 +64,32 @@ function calculateRowCircumferences(circumference, stitch) {
 }
 
 // Generates the pattern for the first row.
-// Returns a string.
+// Returns an array containing two strings: The list item and it's description.
 function generateFirstRow(rowCircumference, stitch, joinedRounds) {
     let pattern = `Magic ring, ${rowCircumference} ${stitch.short}`;
+    let description = `Magic ring, ${rowCircumference} ${stitch.name}`;
     if (joinedRounds) {
         pattern += `, join. Ch ${stitch.chainCount}`;
+        description += `, join. Chain ${stitch.chainCount}`;
     }
     pattern += `. (${rowCircumference})`;
-    return pattern;
+    description += `. ${rowCircumference} stitches total.`
+    return [pattern, description];
 }
 
 // Generates the pattern for the last row.
 // Returns a string.
 function generateLastRow(stuffingRow) {
     if (stuffingRow) {
-        return "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
+        let pattern = "Stuff the sphere if desired. Weave a thread through all the stitches and pull tight to finish.";
+        return [pattern, pattern];
     } 
-    return "Finish stuffing the sphere. Weave a thread through all the stitches and pull tight to finish.";
+    let pattern = "Finish stuffing the sphere. Weave a thread through all the stitches and pull tight to finish.";
+    return [pattern, pattern];
 }
 
 // Generates the pattern for any row that is not the first or last.
-// Returns a string.
+// Returns an array containing two strings: The pattern, and the description.
 function generateMiddleRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds) {
     if (rowCircumference > prevRowCircumference) {
         return generateIncRow(rowCircumference, prevRowCircumference, stitch, joinedRounds);
@@ -97,28 +102,35 @@ function generateMiddleRow(rowCircumference, prevRowCircumference, stitch, isStu
 
 function generateStraightRow(rowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds) {
     let pattern = `${capitalizeFirstLetter(stitch.short)} in every stitch`;
+    let description = `${capitalizeFirstLetter(stitch.name)} in every stitch`;
     if (joinedRounds) {
-        pattern += ", join"
+        pattern += ", join";
+        description += ", join";
         if (!isLastRow) {
             pattern += `. Ch ${stitch.chainCount}`;
+            description += `. Chain ${stitch.chainCount}`;
         }
     }
     pattern += `. (${rowCircumference})`;
+    description += `. ${rowCircumference} stitches total.`
     if (isStuffingRow) {
         pattern += " Lightly stuff the sphere if desired.";
+        description += " Lightly stuff the sphere if desired."
     }
-    return pattern;
+    return [pattern, description];
 }
 
 // Generates the pattern for an increase row.
-// Returns a string.
+// Returns a an array containing two strings: the pattern and the description.
 function generateIncRow(rowCircumference, prevRowCircumference, stitch, joinedRounds) {
     let pattern = "";
+    let description = "";
     if (rowCircumference > 2*prevRowCircumference) {
         throw Error("Can not generate increase row: row more than twice as long as previous")
     }
     if (rowCircumference == 2*prevRowCircumference) {
         pattern += "Inc in every stitch";
+        description += "Increase in every stitch";
     } else {
         let delta = rowCircumference-prevRowCircumference;
         if (Math.floor(prevRowCircumference/delta) < 2) { 
@@ -129,12 +141,15 @@ function generateIncRow(rowCircumference, prevRowCircumference, stitch, joinedRo
             if (repeats > 1) {
                 pattern += "*";
             }
-            pattern += `${capitalizeFirstLetter(stitch.short)} 1, inc ${repeatWidth-1}`;
+            pattern += `1 ${stitch.short}, ${repeatWidth-1} inc`;
+            description += `1 ${stitch.name}, ${repeatWidth-1} increase`;
             if (repeats > 1) {
                 pattern += `* ×${repeats}`;
+                description += `. Repeat from beginning of row ${repeats} times`;
             }
             if (tail > 0) {
-                pattern += `, inc ${tail}`;
+                pattern += `, ${tail} inc`;
+                description += `, ${tail} increase`;
             }
         } else { 
             // fewer increases than normal stitches, distribute increases
@@ -144,28 +159,35 @@ function generateIncRow(rowCircumference, prevRowCircumference, stitch, joinedRo
             if (repeats > 1) {
                 pattern += "*";
             }
-            pattern += `${capitalizeFirstLetter(stitch.short)} ${repeatWidth-1}, inc 1`;
+            pattern += `${repeatWidth-1} ${stitch.short}, 1 inc`;
+            description += `${repeatWidth-1} ${stitch.name}, 1 increase`;
             if (repeats > 1) {
                 pattern += `* ×${repeats}`;
+                description += `. Repeat from beginning of row ${repeats} times`;
             }
             if (tail > 0) {
-                pattern += `, ${stitch.short} ${tail}`;
+                pattern += `, ${tail} ${stitch.short}`;
+                description += `, ${tail} ${stitch.name}`;
             }
         }
     }
     if (joinedRounds) {
         pattern += `, join. Ch ${stitch.chainCount}`;
+        description += `, join. Chain ${stitch.chainCount}`
     }
     pattern += `. (${rowCircumference})`;
-    return pattern;
+    description += `. ${rowCircumference} stitches total.`
+    return [pattern,description];
 }
 
 // Generates the pattern for a decrease row.
-// Returns a string.
+// Returns a an array containing two strings: the pattern and the description.
 function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffingRow, isLastRow, joinedRounds) {
     let pattern = "";
+    let description = "";
     if (prevRowCircumference == 2*rowCircumference) {
         pattern += "Dec in every stitch";
+        description += "Decrease in every stitch";
     } else {
         let delta = prevRowCircumference-rowCircumference;
         if (Math.floor(rowCircumference/delta) < 2) { 
@@ -176,12 +198,15 @@ function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffi
             if (repeats > 1) {
                 pattern += "*";
             }
-            pattern += `${capitalizeFirstLetter(stitch.short)} 1, dec ${repeatWidth-1}`;
+            pattern += `1 ${stitch.short}, ${repeatWidth-1} dec`;
+            description += `1 ${stitch.name}, ${repeatWidth-1} decrease`;
             if (repeats > 1) {
                 pattern += `* ×${repeats}`;
+                description += `. Repeat from beginning of row ${repeats} times`;
             }
             if (tail > 0) {
-                pattern += `, dec ${tail}`;
+                pattern += `, ${tail} dec`;
+                description += `, ${tail} decrease`;
             }
         } else { 
             // fewer decreases than normal stitches, distribute decreases
@@ -191,26 +216,33 @@ function generateDecRow(rowCircumference, prevRowCircumference, stitch, isStuffi
             if (repeats > 1) {
                 pattern += "*";
             }
-            pattern += `${capitalizeFirstLetter(stitch.short)} ${repeatWidth-1}, dec 1`;
+            pattern += `${repeatWidth-1} ${stitch.short}, 1 dec`;
+            description += `${repeatWidth-1} ${stitch.name}, 1 decrease`;
             if (repeats > 1) {
                 pattern += `* ×${repeats}`;
+                description += `. Repeat from beginning of row ${repeats} times`;
             }
             if (tail > 0) {
-                pattern += `, ${stitch.short} ${tail}`;
+                pattern += `, ${tail} ${stitch.short}`;
+                description += `, ${tail} ${stitch.name}`;
             }
         }
     }
     if (joinedRounds) {
-        pattern += `, join`;
+        pattern += ", join";
+        description += ", join";
         if (!(isLastRow)) {
             pattern += `. Ch ${stitch.chainCount}`;
+            description += `. Chain ${stitch.chainCount}`;
         }
     }
     pattern += `. (${rowCircumference})`;
+    description += `. ${rowCircumference} stitches total.`;
     if (isStuffingRow) {
         pattern += " Lightly stuff the sphere if desired.";
+        description += " Lightly stuff the sphere if desired.";
     }
-    return pattern;
+    return [pattern, description];
 }
 
 // Calculates the row in which stuffing should be added.

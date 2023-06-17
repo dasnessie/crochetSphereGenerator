@@ -4,13 +4,16 @@ function capitalizeFirstLetter(string) {
 }
 
 // Turns an array into a string of html list elements.
+// Takes an array of 2-length arrays (first element is list element, second is aria label)
 function makeHtmlList(array) {
-    if (array.length == 0) {
-        return "";
+    // if (array.length == 0) {
+    //     return "";
+    // }
+    let list = "";
+    for (const item of array) {
+        list += `<li aria-label=\"${item[1]}\">`;
+        list += `${item[0]}</li>`;
     }
-    let list = "<li>";
-    list += array.join("</li><li>");
-    list += "</li>";
     return list;
 }
 
