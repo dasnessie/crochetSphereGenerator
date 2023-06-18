@@ -1,0 +1,3 @@
+# Deny access to files or folders that start with a dot ("/." anywhere in the file path)
+RewriteEngine on
+RedirectMatch 403 /\.
