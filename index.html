@@ -1,87 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="description" content="Generate crochet patterns for spheres">
-    <meta name="viewport" content="width=device-width">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="description" content="Generate crochet patterns for spheres" />
+    <meta name="viewport" content="width=device-width" />
     <title>Crochet Sphere Calculator</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/favicon/site.webmanifest">
-</head>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+    <link rel="stylesheet" href="style/style.css" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+  </head>
 
-<body>
+  <body>
     <header>
-        <h1>Crochet Sphere Calculator</h1>
-        <p>Calculate a crochet pattern for a sphere of any size. US terms.</p>
+      <h1>Crochet Sphere Calculator</h1>
+      <p>Calculate a crochet pattern for a sphere of any size. US terms.</p>
     </header>
     <form id="formElem">
-        <p>
-            I need a pattern for a sphere with a circumference of 
-            <input aria-label="number of stitches" type="number" min="3" id="circumference" name="circumference" placeholder="20" required>
-            stitches in 
-            <nobr>
-                <select name="stitch" id="stitchSelect" aria-label="stitch type">
-                    <option value="sc">single crochet</option>
-                    <option value="hdc">half double crochet</option>
-                    <option value="dc">double crochet</option>
-                    <option value="tr">treble crochet</option>
-                    <option value="custom">a custom stitch</option>
-                </select>.
-            </nobr>
-            I want to work in 
-            <nobr>
-                <select name="roundStyle" id="roundStyle" aria-label="round style">
-                    <option value="joined">joined</option>
-                    <option value="continuous">continuous</option>
-                </select> rounds.
-            </nobr>
-            <div id="customStitch">
-                My custom stitch has a ratio of 
-                <label for="stWidth">width</label>
-                <input type="number" id="stWidth" name="stWidth" step="0.01" min="0.01">
-                to 
-                <label for="stHeight">height</label>
-                <nobr>
-                    <input type="number" id="stHeight" name="stHeight" step="0.01" min="0.01">. 
-                </nobr>
-                (Hint: crochet a sample of 10 st by 10 rows and input the measurements here.)
-            </div>
-        </p>
-        <p>
-            <button type="submit">Generate Pattern</button>
-        </p>
+      <p>
+        I need a pattern for a sphere with a circumference of
+        <input
+          aria-label="number of stitches"
+          type="number"
+          min="3"
+          id="circumference"
+          name="circumference"
+          placeholder="20"
+          required
+        />
+        stitches in
+        <nobr>
+          <select name="stitch" id="stitchSelect" aria-label="stitch type">
+            <option value="sc">single crochet</option>
+            <option value="hdc">half double crochet</option>
+            <option value="dc">double crochet</option>
+            <option value="tr">treble crochet</option>
+            <option value="custom">a custom stitch</option></select
+          >.
+        </nobr>
+        I want to work in
+        <nobr>
+          <select name="roundStyle" id="roundStyle" aria-label="round style">
+            <option value="joined">joined</option>
+            <option value="continuous">continuous</option>
+          </select>
+          rounds.
+        </nobr>
+      </p>
+      <p id="customStitch">
+        My custom stitch has a ratio of
+        <label for="stWidth">width</label>
+        <input
+          type="number"
+          id="stWidth"
+          name="stWidth"
+          step="0.01"
+          min="0.01"
+        />
+        to
+        <label for="stHeight">height</label>
+        <nobr>
+          <input
+            type="number"
+            id="stHeight"
+            name="stHeight"
+            step="0.01"
+            min="0.01"
+          />.
+        </nobr>
+        (Hint: crochet a sample of 10 st by 10 rows and input the measurements
+        here.)
+      </p>
+      <p>
+        <button type="submit">Generate Pattern</button>
+      </p>
     </form>
     <article>
-        <h2 id="patternTitle">Crochet pattern for a sphere with a circumference of 20 stitches in single crochet</h2>
-        <p class="warning" id="patternWarning">
-            <strong>Warning:</strong> This is the default warning.
-        </p>
-        <ol id="patternBody">
-            <li>Magic ring, 5 sc, join. Ch 1. (5)</li>
-            <li>Inc in every stitch, join. Ch 1. (10)</li>
-            <li>*Sc 1, inc 1* ×4, sc 2, join. Ch 1. (14)</li>
-            <li>*Sc 3, inc 1* ×3, sc 2, join. Ch 1. (17)</li>
-            <li>*Sc 7, inc 1* ×2, sc 1, join. Ch 1. (19)</li>
-            <li>Sc 18, inc 1, join. Ch 1. (20)</li>
-            <li>Sc 18, dec 1, join. Ch 1. (19)</li>
-            <li>*Sc 7, dec 1* × 2, sc 1, join. Ch 1. (17)</li>
-            <li>*Sc 3, dec 1* × 3, sc 2, join. Ch 1. (14)</li>
-            <li>*Sc 1, dec 1* × 4, sc 2, join. Ch 1. (10) Lightly stuff the sphere if desired.</li>
-            <li>Dec in every stitch, join. (5)</li>
-            <li>Finish stuffing the sphere. Weave a thread through all the stitches and pull tight to finish.</li>
-        </ol>
+      <h2 id="patternTitle">
+        Crochet pattern for a sphere with a circumference of 20 stitches in
+        single crochet
+      </h2>
+      <p class="warning" id="patternWarning">
+        <strong>Warning:</strong> This is the default warning.
+      </p>
+      <ol id="patternBody">
+        <li>Magic ring, 5 sc, join. Ch 1. (5)</li>
+        <li>Inc in every stitch, join. Ch 1. (10)</li>
+        <li>*Sc 1, inc 1* ×4, sc 2, join. Ch 1. (14)</li>
+        <li>*Sc 3, inc 1* ×3, sc 2, join. Ch 1. (17)</li>
+        <li>*Sc 7, inc 1* ×2, sc 1, join. Ch 1. (19)</li>
+        <li>Sc 18, inc 1, join. Ch 1. (20)</li>
+        <li>Sc 18, dec 1, join. Ch 1. (19)</li>
+        <li>*Sc 7, dec 1* × 2, sc 1, join. Ch 1. (17)</li>
+        <li>*Sc 3, dec 1* × 3, sc 2, join. Ch 1. (14)</li>
+        <li>
+          *Sc 1, dec 1* × 4, sc 2, join. Ch 1. (10) Lightly stuff the sphere if
+          desired.
+        </li>
+        <li>Dec in every stitch, join. (5)</li>
+        <li>
+          Finish stuffing the sphere. Weave a thread through all the stitches
+          and pull tight to finish.
+        </li>
+      </ol>
     </article>
     <script type="module" src="script/main.js"></script>
     <footer>
-        <p>
-            Built by <a href="https://dasnessie.de">dasNessie</a>. <a href="https://github.com/dasnessie/crochetSphereGenerator">Find this project on Github!</a> 
-            The generated patterns are published under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0-1.0</a>, which means you may do almost anything with them, but I'm not liable.
-        </p>
+      <p>
+        Built by <a href="https://dasnessie.de">dasNessie</a>.
+        <a href="https://github.com/dasnessie/crochetSphereGenerator"
+          >Find this project on Github!</a
+        >
+        The generated patterns are published under
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0-1.0</a
+        >, which means you may do almost anything with them, but I'm not liable.
+      </p>
     </footer>
-</body>
-</html> 
+  </body>
+</html>
