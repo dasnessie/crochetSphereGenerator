@@ -5,8 +5,12 @@ import { capitalizeFirstLetter } from "./helpers.js";
 function generatePattern(circumference, stitch, joinedRounds) {
   return {
     title:
-      `Crochet pattern for a sphere with a circumference of ` +
-      `${circumference} stitches in ${stitch.titleName}`,
+      {
+        abbrev: `Crochet pattern for a sphere with a circumference of ` +
+          `${circumference} stitches in ${stitch.titleName}`,
+        desc: `Crochet pattern for a sphere with a circumference of ` +
+        `${circumference} stitches in ${stitch.name}`
+      },
     body: generatePatternBody(circumference, stitch, joinedRounds),
   };
 }
@@ -87,7 +91,7 @@ function calculateRowCircumferences(circumference, stitch) {
 }
 
 // Generates the pattern for the first row.
-// Returns an array containing two strings: The list item and it's description.
+// Returns an object containing two strings: The list item and it's description.
 function generateFirstRow(rowCircumference, stitch, joinedRounds) {
   let pattern = `Magic ring, ${rowCircumference} ${stitch.short}`;
   let description = `Magic ring, ${rowCircumference} ${stitch.name}`;
@@ -97,26 +101,35 @@ function generateFirstRow(rowCircumference, stitch, joinedRounds) {
   }
   pattern += `. (${rowCircumference})`;
   description += `. ${rowCircumference} stitches total.`;
-  return [pattern, description];
+  return {
+    abbrev: pattern,
+    desc: description
+  }
 }
 
 // Generates the pattern for the last row.
-// Returns a string.
+// Returns an object containing two strings: The list item and it's description.
 function generateLastRow(stuffingRow) {
   if (stuffingRow) {
     let pattern =
       "Stuff the sphere if desired. Weave a thread through all the stitches " +
       "and pull tight to finish.";
-    return [pattern, pattern];
+    return {
+      abbrev: pattern,
+      desc: pattern
+    }
   }
   let pattern =
     "Finish stuffing the sphere. Weave a thread through all the stitches and " +
     "pull tight to finish.";
-  return [pattern, pattern];
+  return {
+    abbrev: pattern,
+    desc: pattern
+  }
 }
 
 // Generates the pattern for any row that is not the first or last.
-// Returns an array containing two strings: The pattern, and the description.
+// Returns an object containing two strings: The pattern, and the description.
 function generateMiddleRow(
   rowCircumference,
   prevRowCircumference,
@@ -175,11 +188,14 @@ function generateStraightRow(
     pattern += " Lightly stuff the sphere if desired.";
     description += " Lightly stuff the sphere if desired.";
   }
-  return [pattern, description];
+  return {
+    abbrev: pattern,
+    desc: description
+  }
 }
 
 // Generates the pattern for an increase row.
-// Returns a an array containing two strings: the pattern and the description.
+// Returns a an object containing two strings: the pattern and the description.
 function generateIncRow(
   rowCircumference,
   prevRowCircumference,
@@ -242,11 +258,14 @@ function generateIncRow(
   }
   pattern += `. (${rowCircumference})`;
   description += `. ${rowCircumference} stitches total.`;
-  return [pattern, description];
+  return {
+    abbrev: pattern,
+    desc: description
+  }
 }
 
 // Generates the pattern for a decrease row.
-// Returns a an array containing two strings: the pattern and the description.
+// Returns an object containing two strings: the pattern and the description.
 function generateDecRow(
   rowCircumference,
   prevRowCircumference,
@@ -314,7 +333,10 @@ function generateDecRow(
     pattern += " Lightly stuff the sphere if desired.";
     description += " Lightly stuff the sphere if desired.";
   }
-  return [pattern, description];
+  return {
+    abbrev: pattern,
+    desc: description
+  }
 }
 
 // Calculates the row in which stuffing should be added.

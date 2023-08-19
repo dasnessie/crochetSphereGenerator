@@ -69,6 +69,7 @@ document.querySelector("#formElem").addEventListener("submit", (e) => {
   const circumference = data.get("circumference");
   const stitch = stitches[data.get("stitch")];
   const joinedRounds = data.get("roundStyle") === "joined";
+  const use_abbreviations = !data.get("no-abbreviations");
 
   try {
     let pattern = generatePattern(circumference, stitch, joinedRounds);
@@ -76,16 +77,29 @@ document.querySelector("#formElem").addEventListener("submit", (e) => {
     if (pattern.body.length < 5) {
       showWarning(
         "Warning",
-        "Your pattern looks awfully short. I'll display it anyways, " +
-          "but make sure to check that the values you entered make sense."
+        "Your pattern looks awfully short. I'll display it anyways, "+
+        "but make sure to check that the values you entered make sense."
       );
     } else {
       hideWarning();
     }
 
-    document.getElementById("patternTitle").innerHTML = pattern.title;
+    // generate array containing the selected list elements
+    let pattern_list_elements = []
+    if (use_abbreviations) {
+      for (const i of pattern.body) {
+        pattern_list_elements.push(i.abbrev)
+      }
+    } else {
+      for (const i of pattern.body) {
+        pattern_list_elements.push(i.desc)
+      }
+    }
+
+    document.getElementById("patternTitle").innerHTML = 
+      use_abbreviations ? pattern.title.abbrev : pattern.title.desc;
     document.getElementById("patternBody").innerHTML = makeHtmlList(
-      pattern.body
+      pattern_list_elements
     );
   } catch (e) {
     document.getElementById("patternTitle").innerHTML = "";
