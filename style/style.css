@@ -1,3 +1,9 @@
+body {
+  display: grid;
+  grid-template-columns: 1fr min(max(45rem, 50%), 95%) 1fr;
+}
+
+
 input[type="number"] {
   width: 5em;
 }
@@ -8,6 +14,16 @@ select {
 
 label {
   display: inline-block;
+}
+
+.accessibility-buttons {
+  display: flex;
+  justify-content: center; /* Horizontally center the content */
+  align-items: center; /* Vertically center the content */
+}
+
+.accessibility-buttons button {
+  margin: 5px;
 }
 
 .warning {

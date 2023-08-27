@@ -8,6 +8,23 @@ document
   .querySelector("#stitchSelect")
   .addEventListener("change", displayCustomStitchInput);
 
+let current_scale = 1;
+const increaseFontButton = document.getElementById("increase-font");
+const decreaseFontButton = document.getElementById("decrease-font");
+const resetFontButton = document.getElementById("reset-font");
+
+increaseFontButton.addEventListener("click", () => {
+  adjustFontSizes(1.1);
+});
+
+decreaseFontButton.addEventListener("click", () => {
+  adjustFontSizes(1/1.1);
+});
+
+resetFontButton.addEventListener("click", () => {
+  adjustFontSizes(1/current_scale);
+})
+
 // Hide and show the section of the form to input custom stitch
 function displayCustomStitchInput() {
   if (document.querySelector("#stitchSelect").value == "custom") {
@@ -107,3 +124,11 @@ document.querySelector("#formElem").addEventListener("submit", (e) => {
     showWarning("Error", e.message);
   }
 });
+
+function adjustFontSizes(changeAmount) {
+const htmlElement = document.querySelector("html");
+
+htmlElement.style.fontSize = `${parseFloat(getComputedStyle(htmlElement).fontSize) * changeAmount}px`;
+
+current_scale = current_scale * changeAmount;
+}
